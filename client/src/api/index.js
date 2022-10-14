@@ -24,15 +24,16 @@ const api = axios.create({
 // CUSTOM FILTERS FOR QUERIES
 export const getAllPlaylists = () => api.get(`/playlists`)
 export const getPlaylistPairs = () => api.get('playlistpairs')
-export const getPlaylistById = (id) => api.get(`/playlist/${id}`)
-
-export const createPlaylist = (playlist) => api.post(`/playlist/`, playlist)
+export const getPlaylistById = (id) => api.get(`/playlist/${id}`)                           // GET request: gets a resource
+export const createPlaylist = (playlist) => api.post(`/playlist/`, playlist)                // POST request: creates a resource
+export const updatePlaylistById = (id, playlist) => api.put(`/playlist/${id}`, playlist)    // PUT request: creates or replaces a resource
 
 const apis = {
     getAllPlaylists,
     getPlaylistPairs,
     getPlaylistById,
     createPlaylist,
+    updatePlaylistById,
 }
 
 export default apis

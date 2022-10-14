@@ -18,6 +18,7 @@ export const GlobalStoreActionType = {
     LOAD_ID_NAME_PAIRS: "LOAD_ID_NAME_PAIRS",
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
+    MARK_LIST_FOR_DELETION: "MARK_LIST_FOR_DELETION",
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -42,8 +43,8 @@ export const useGlobalStore = () => {
             // LIST UPDATE OF ITS NAME
             case GlobalStoreActionType.CHANGE_LIST_NAME: {
                 return setStore({
-                    idNamePairs: payload.idNamePairs, // new
-                    currentList: payload.playlist, // new
+                    idNamePairs: payload.idNamePairs,
+                    currentList: null,
                     newListCounter: store.newListCounter,
                     listNameActive: false
                 });
@@ -61,7 +62,7 @@ export const useGlobalStore = () => {
             case GlobalStoreActionType.CREATE_NEW_LIST: {
                 return setStore({
                     idNamePairs: store.idNamePairs,
-                    currentList: payload, // new???
+                    currentList: payload,
                     newListCounter: store.newListCounter + 1,
                     listNameActive: false
                 })
@@ -123,6 +124,7 @@ export const useGlobalStore = () => {
                     type: GlobalStoreActionType.CREATE_NEW_LIST,
                     payload: playlist
                 });
+                // Edit mode right after list is made:
                 store.history.push("/playlist/" + playlist._id) // Changes browser/client URL (Ex. history.push(‘/‘) changes to https://localhost:3000/)
             }
         }
@@ -140,6 +142,7 @@ export const useGlobalStore = () => {
                 async function updateList(playlist) {
                     response = await api.updatePlaylistById(playlist._id, playlist);
                     if (response.data.success) {
+                        console.log(response.data)
                         async function getListPairs(playlist) {
                             response = await api.getPlaylistPairs();
                             if (response.data.success) {
@@ -217,7 +220,7 @@ export const useGlobalStore = () => {
     }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
-    store.setlistNameActive = function () {
+    store.setIsListNameEditActive = function () {
         storeReducer({
             type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
             payload: null

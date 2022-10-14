@@ -39,6 +39,48 @@ createPlaylist = (req, res) => {
             })
         })
 }
+updatePlaylistById = async (req, res) => {
+    const body = req.body;
+    console.log("createPlaylist", JSON.stringify(body))
+
+    if (!body) {
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide the body of the Playlist',
+        })
+    }
+    Playlist.findOne({_id: req.params.id}, (err, list) => {
+        if (err) {
+            return res.status(404).json({
+                success: false, 
+                error: err,
+                message: 'Playlist not found'
+            })
+        }
+        list.name = body.name
+        list.songs = body.songs
+
+        list
+            .save()
+            .then( () => {
+                console.log("Success")
+                return res.status(201).json({
+                    success: true,
+                    id: list._id,
+                    playlist: list,
+                    message: 'Playlist has been updated!'
+                })
+            })
+            .catch(error => {
+                console.log("Error")
+                return res.status(404).json({
+                    success: false,
+                    error,
+                    message: 'Playlist was not updated!',
+                })
+            })
+    })
+}
 getPlaylistById = async (req, res) => {
     await Playlist.findOne({ _id: req.params.id }, (err, list) => {
         if (err) {
@@ -91,5 +133,6 @@ module.exports = {
     createPlaylist,
     getPlaylists,
     getPlaylistPairs,
-    getPlaylistById
+    getPlaylistById,
+    updatePlaylistById,
 }
