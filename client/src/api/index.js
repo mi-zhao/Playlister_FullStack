@@ -10,6 +10,7 @@
     @author McKilla Gorilla
 */
 
+// GENERATES HTTP REQUESTS
 import axios from 'axios'
 const api = axios.create({
     baseURL: 'http://localhost:4000/api',
@@ -25,10 +26,13 @@ export const getAllPlaylists = () => api.get(`/playlists`)
 export const getPlaylistPairs = () => api.get('playlistpairs')
 export const getPlaylistById = (id) => api.get(`/playlist/${id}`)
 
+export const createPlaylist = (playlist) => api.post(`/playlist/`, playlist)
+
 const apis = {
     getAllPlaylists,
     getPlaylistPairs,
     getPlaylistById,
+    createPlaylist,
 }
 
 export default apis

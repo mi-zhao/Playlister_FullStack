@@ -22,6 +22,7 @@ function SongCard(props) {
             <input
                 type="button"
                 id={"remove-song-" + index}
+                onClick={console.log(store)}
                 className="list-card-button"
                 value={"\u2715"}
             />

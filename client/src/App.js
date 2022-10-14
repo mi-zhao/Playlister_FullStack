@@ -12,7 +12,7 @@ const App = () => {
         <Router>
             <Banner />
             <Switch>
-                <Route path="/" exact component={ListSelector} />
+                <Route path="/" exact component={ListSelector} />  {/* Home page */}
                 <Route path="/playlist/:id" exact component={PlaylistCards} />
             </Switch>
             <Statusbar />

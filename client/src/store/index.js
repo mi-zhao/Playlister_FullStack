@@ -42,8 +42,8 @@ export const useGlobalStore = () => {
             // LIST UPDATE OF ITS NAME
             case GlobalStoreActionType.CHANGE_LIST_NAME: {
                 return setStore({
-                    idNamePairs: payload.idNamePairs,
-                    currentList: payload.playlist,
+                    idNamePairs: payload.idNamePairs, // new
+                    currentList: payload.playlist, // new
                     newListCounter: store.newListCounter,
                     listNameActive: false
                 });
@@ -51,7 +51,7 @@ export const useGlobalStore = () => {
             // STOP EDITING THE CURRENT LIST
             case GlobalStoreActionType.CLOSE_CURRENT_LIST: {
                 return setStore({
-                    idNamePairs: store.idNamePairs,
+                    idNamePairs: store.idNamePairs, 
                     currentList: null,
                     newListCounter: store.newListCounter,
                     listNameActive: false
@@ -61,7 +61,7 @@ export const useGlobalStore = () => {
             case GlobalStoreActionType.CREATE_NEW_LIST: {
                 return setStore({
                     idNamePairs: store.idNamePairs,
-                    currentList: payload,
+                    currentList: payload, // new???
                     newListCounter: store.newListCounter + 1,
                     listNameActive: false
                 })
@@ -110,13 +110,32 @@ export const useGlobalStore = () => {
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
 
+    store.createNewList = function () {
+        async function asyncCreateNewList() {
+            let newlist = {
+                name: "Untitled",
+                songs: []
+            }
+            let response = await api.createPlaylist(newlist);
+            if (response.data.success) {
+                let playlist = response.data.playlist;
+                storeReducer({
+                    type: GlobalStoreActionType.CREATE_NEW_LIST,
+                    payload: playlist
+                });
+                store.history.push("/playlist/" + playlist._id) // Changes browser/client URL (Ex. history.push(‘/‘) changes to https://localhost:3000/)
+            }
+        }
+        asyncCreateNewList();
+    }
+
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = function (id, newName) {
         // GET THE LIST
         async function asyncChangeListName(id) {
             let response = await api.getPlaylistById(id);
             if (response.data.success) {
-                let playlist = response.data.playist;
+                let playlist = response.data.playlist;
                 playlist.name = newName;
                 async function updateList(playlist) {
                     response = await api.updatePlaylistById(playlist._id, playlist);
@@ -190,6 +209,7 @@ export const useGlobalStore = () => {
         return store.currentList.songs.length;
     }
     store.undo = function () {
+        console.log(store);
         tps.undoTransaction();
     }
     store.redo = function () {
