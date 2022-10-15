@@ -258,6 +258,27 @@ export const useGlobalStore = () => {
         }
         asyncSetCurrentList(id);
     }
+
+    store.addSong = function () {
+        const playlist = store.currentList;
+        let song = {
+            artist: "Untitled",
+            title: "Unknown",
+            youTubeId: "EpX1_YJPGAY"
+        }
+        playlist.songs.push(song)
+        async function asyncAddSong() {
+            let response = await api.updatePlaylistById(store.currentList._id, playlist)
+            if (response.data.success) {
+                storeReducer({
+                    type: GlobalStoreActionType.SET_CURRENT_LIST,
+                    payload: store.currentList
+                })
+            }
+        }
+        asyncAddSong();
+    }
+
     store.getPlaylistSize = function() {
         return store.currentList.songs.length;
     }
