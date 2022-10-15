@@ -39,7 +39,7 @@ createPlaylist = (req, res) => {
             })
         })
 }
-updatePlaylistById = async (req, res) => {
+updatePlaylistById = async (req, res) => {  // (request, result)
     const body = req.body;
     console.log("createPlaylist", JSON.stringify(body))
 
@@ -49,7 +49,7 @@ updatePlaylistById = async (req, res) => {
             error: 'You must provide the body of the Playlist',
         })
     }
-    Playlist.findOne({_id: req.params.id}, (err, list) => {
+    await Playlist.findOne({_id: req.params.id}, (err, list) => {
         if (err) {
             return res.status(404).json({
                 success: false, 
@@ -79,6 +79,20 @@ updatePlaylistById = async (req, res) => {
                     message: 'Playlist was not updated!',
                 })
             })
+    })
+}
+deletePlaylistById = async (req, res) => {
+    await Playlist.findByIdAndDelete({_id: req.params.id}, () => {
+        return res.status(200).json({
+            success: true,
+            message: 'Playlist has been deleted!'
+        })
+    }).catch(error => {
+        return res.status(400).json({
+            success: false,
+            error,
+            message: 'Playlist was not able to be deleted'
+        })
     })
 }
 getPlaylistById = async (req, res) => {
@@ -135,4 +149,5 @@ module.exports = {
     getPlaylistPairs,
     getPlaylistById,
     updatePlaylistById,
+    deletePlaylistById
 }

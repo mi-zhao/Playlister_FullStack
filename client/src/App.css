@@ -224,6 +224,12 @@ input {
   font-size: 24pt;
 }
 
+.confirm-cancel-button {
+  
+  /* float: ; */
+  margin: 10px;
+}
+
 #close-modal-button {
   float:right;
 }

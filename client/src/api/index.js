@@ -22,11 +22,20 @@ const api = axios.create({
 // WORK, AND SOME REQUIRE DATA, WHICH WE CALL THE payload, FOR WHEN
 // WE NEED TO PUT THINGS INTO THE DATABASE OR IF WE HAVE SOME
 // CUSTOM FILTERS FOR QUERIES
+
+export const deletePlaylistById = (id) => api.delete(`/playlist/${id}`)
 export const getAllPlaylists = () => api.get(`/playlists`)
-export const getPlaylistPairs = () => api.get('playlistpairs')
+export const getPlaylistPairs = () => api.get('/playlistpairs')
 export const getPlaylistById = (id) => api.get(`/playlist/${id}`)                           // GET request: gets a resource
 export const createPlaylist = (playlist) => api.post(`/playlist/`, playlist)                // POST request: creates a resource
 export const updatePlaylistById = (id, playlist) => api.put(`/playlist/${id}`, playlist)    // PUT request: creates or replaces a resource
+
+// export const createPlaylist = (payload) => api.post(`/playlist`, payload)
+// export const getAllPlaylists = () => api.get(`/playlists`)
+// export const getPlaylistPairs = () => api.get('playlistpairs')
+// export const updatePlaylistById = (id, payload) => api.put(`/playlist/${id}`, payload)
+// export const deletePlaylistById = (id) => api.delete(`/playlist/${id}`)
+// export const getPlaylistById = (id) => api.get(`/playlist/${id}`)
 
 const apis = {
     getAllPlaylists,
@@ -34,6 +43,7 @@ const apis = {
     getPlaylistById,
     createPlaylist,
     updatePlaylistById,
+    deletePlaylistById,
 }
 
 export default apis

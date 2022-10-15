@@ -35,7 +35,7 @@ function ListCard(props) {
     function toggleDelete() {
         let activeModal = !deleteActive;    // setState to have delete modal active
         if (activeModal) {
-            store.setIsListNameDeleteActive();
+            store.setMarkedPlaylist(idNamePair);
         }
         setDeleteActive(activeModal);         // update State
     }
