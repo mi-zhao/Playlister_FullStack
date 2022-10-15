@@ -25,8 +25,6 @@ function EditToolbar() {
     }
     function handleAddSong() {
         store.addSong();
-        console.log("id", store.currentList)
-        store.history.push("/playlist/" + store.currentList._id)
     }
     let editStatus = false;
     if (store.isListNameEditActive) {

@@ -19,6 +19,7 @@ export const GlobalStoreActionType = {
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
     MARK_LIST_FOR_DELETION: "MARK_LIST_FOR_DELETION",
+    SET_EDIT_SONG_ACTIVE: "SET_EDIT_SONG_ACTIVE"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -34,7 +35,8 @@ export const useGlobalStore = () => {
         newListCounter: 0,
         listNameActive: false,
         idToDelete: null,
-        playlistName: null
+        playlistName: null,
+        currentSongIndex: null
     });
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
@@ -50,7 +52,10 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     idToDelete: null,
-                    playlistName: null
+                    playlistName: null,
+                    currentSongIndex: null,
+                    currentSongArtist: null,
+                    currentSongTitle: null,
                 });
             }
             // STOP EDITING THE CURRENT LIST
@@ -61,7 +66,10 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     idToDelete: null,
-                    playlistName: null
+                    playlistName: null,
+                    currentSongIndex: null,
+                    currentSongArtist: null,
+                    currentSongTitle: null,
                 })
             }
             // CREATE A NEW LIST
@@ -72,7 +80,10 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter + 1,
                     listNameActive: false,
                     idToDelete: null,
-                    playlistName: null
+                    playlistName: null,
+                    currentSongIndex: null,
+                    currentSongArtist: null,
+                    currentSongTitle: null,
                 })
             }
             // GET ALL THE LISTS SO WE CAN PRESENT THEM
@@ -83,7 +94,10 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     idToDelete: null,
-                    playlistName: null
+                    playlistName: null,
+                    currentSongIndex: null,
+                    currentSongArtist: null,
+                    currentSongTitle: null,
                 });
             }
             // PREPARE TO DELETE A LIST
@@ -95,6 +109,9 @@ export const useGlobalStore = () => {
                     listNameActive: false,
                     idToDelete: payload._id,
                     playlistName: payload.name,
+                    currentSongIndex: null,
+                    currentSongArtist: null,
+                    currentSongTitle: null,
                 });
             }
             // UPDATE A LIST
@@ -105,7 +122,10 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     idToDelete: null,
-                    playlistName: null
+                    playlistName: null,
+                    currentSongIndex: null,
+                    currentSongArtist: null,
+                    currentSongTitle: null,
                 });
             }
             // START EDITING A LIST NAME
@@ -116,7 +136,23 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     listNameActive: true,
                     idToDelete: null,
-                    playlistName: null
+                    playlistName: null,
+                    currentSongIndex: null,
+                    currentSongArtist: null,
+                    currentSongTitle: null,
+                });
+            }
+            case GlobalStoreActionType.SET_EDIT_SONG_ACTIVE: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: store.currentList,
+                    newListCounter: store.newListCounter,
+                    listNameActive: store.listNameActive,
+                    idToDelete: store.idToDelete,
+                    playlistName: store.playlistName,
+                    currentSongIndex: payload.index,
+                    currentSongArtist: payload.artist,
+                    currentSongTitle: payload.title,
                 });
             }
             default:
@@ -277,6 +313,40 @@ export const useGlobalStore = () => {
             }
         }
         asyncAddSong();
+    }
+
+    store.deleteSong = function() {
+        const playlist = store.currentList;
+        playlist.songs.splice(store.currentSongIndex, 1);
+
+        async function asyncDeleteSong() {
+            let response = await api.updatePlaylistById(store.currentList._id, playlist)
+            if (response.data.success) {
+                storeReducer({
+                    type: GlobalStoreActionType.SET_CURRENT_LIST,
+                    payload: store.currentList
+                })
+                store.hideDeleteSongModal();
+            }
+        }
+        asyncDeleteSong();
+    }
+
+    store.showDeleteSongModal = function(index) {
+        let song = {
+            index: index,
+            title: store.currentList.songs[index].title,
+            artist: store.currentList.songs[index].artist,
+        }
+        storeReducer({
+            type: GlobalStoreActionType.SET_EDIT_SONG_ACTIVE,
+            payload: song
+        });
+        document.getElementById("delete-song-modal").classList.add("is-visible");
+    }
+
+    store.hideDeleteSongModal = function () {
+        document.getElementById("delete-song-modal").classList.remove("is-visible");
     }
 
     store.getPlaylistSize = function() {
