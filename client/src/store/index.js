@@ -35,8 +35,8 @@ export const useGlobalStore = () => {
         newListCounter: 0,
         listNameActive: false,
         idToDelete: null,
-        playlistName: null,
-        currentSongIndex: null
+        playlistName: "",
+        currentSongIndex: ""
     });
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
@@ -54,8 +54,8 @@ export const useGlobalStore = () => {
                     idToDelete: null,
                     playlistName: null,
                     currentSongIndex: null,
-                    currentSongArtist: null,
-                    currentSongTitle: null,
+                    currentSongArtist: "",
+                    currentSongTitle: "",
                 });
             }
             // STOP EDITING THE CURRENT LIST
@@ -68,8 +68,8 @@ export const useGlobalStore = () => {
                     idToDelete: null,
                     playlistName: null,
                     currentSongIndex: null,
-                    currentSongArtist: null,
-                    currentSongTitle: null,
+                    currentSongArtist: "",
+                    currentSongTitle: "",
                 })
             }
             // CREATE A NEW LIST
@@ -82,8 +82,8 @@ export const useGlobalStore = () => {
                     idToDelete: null,
                     playlistName: null,
                     currentSongIndex: null,
-                    currentSongArtist: null,
-                    currentSongTitle: null,
+                    currentSongArtist: "",
+                    currentSongTitle: "",
                 })
             }
             // GET ALL THE LISTS SO WE CAN PRESENT THEM
@@ -96,8 +96,8 @@ export const useGlobalStore = () => {
                     idToDelete: null,
                     playlistName: null,
                     currentSongIndex: null,
-                    currentSongArtist: null,
-                    currentSongTitle: null,
+                    currentSongArtist: "",
+                    currentSongTitle: "",
                 });
             }
             // PREPARE TO DELETE A LIST
@@ -110,8 +110,8 @@ export const useGlobalStore = () => {
                     idToDelete: payload._id,
                     playlistName: payload.name,
                     currentSongIndex: null,
-                    currentSongArtist: null,
-                    currentSongTitle: null,
+                    currentSongArtist: "",
+                    currentSongTitle: "",
                 });
             }
             // UPDATE A LIST
@@ -124,8 +124,8 @@ export const useGlobalStore = () => {
                     idToDelete: null,
                     playlistName: null,
                     currentSongIndex: null,
-                    currentSongArtist: null,
-                    currentSongTitle: null,
+                    currentSongArtist: "",
+                    currentSongTitle: "",
                 });
             }
             // START EDITING A LIST NAME
@@ -138,8 +138,8 @@ export const useGlobalStore = () => {
                     idToDelete: null,
                     playlistName: null,
                     currentSongIndex: null,
-                    currentSongArtist: null,
-                    currentSongTitle: null,
+                    currentSongArtist: "",
+                    currentSongTitle: "",
                 });
             }
             case GlobalStoreActionType.SET_EDIT_SONG_ACTIVE: {
@@ -185,37 +185,39 @@ export const useGlobalStore = () => {
 
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = function (id, newName) {
-        // GET THE LIST
-        async function asyncChangeListName(id) {
-            let response = await api.getPlaylistById(id);
-            if (response.data.success) {
-                let playlist = response.data.playlist;
-                playlist.name = newName;
-                console.log(response.data.idNamePairs)  // see if this changed:
-                async function updateList(playlist) {
-                    response = await api.updatePlaylistById(playlist._id, playlist);
-                    if (response.data.success) {
-                        console.log(response.data)
-                        async function getListPairs(playlist) {
-                            response = await api.getPlaylistPairs();
-                            if (response.data.success) {
-                                let pairsArray = response.data.idNamePairs;
-                                storeReducer({
-                                    type: GlobalStoreActionType.CHANGE_LIST_NAME,
-                                    payload: {
-                                        idNamePairs: pairsArray,
-                                        playlist: playlist
-                                    }
-                                });
+        if (newName !== ""){
+            // GET THE LIST
+            async function asyncChangeListName(id) {
+                let response = await api.getPlaylistById(id);
+                if (response.data.success) {
+                    let playlist = response.data.playlist;
+                    playlist.name = newName;
+                    console.log(response.data.idNamePairs)  // see if this changed:
+                    async function updateList(playlist) {
+                        response = await api.updatePlaylistById(playlist._id, playlist);
+                        if (response.data.success) {
+                            console.log(response.data)
+                            async function getListPairs(playlist) {
+                                response = await api.getPlaylistPairs();
+                                if (response.data.success) {
+                                    let pairsArray = response.data.idNamePairs;
+                                    storeReducer({
+                                        type: GlobalStoreActionType.CHANGE_LIST_NAME,
+                                        payload: {
+                                            idNamePairs: pairsArray,
+                                            playlist: playlist
+                                        }
+                                    });
+                                }
                             }
+                            getListPairs(playlist);
                         }
-                        getListPairs(playlist);
                     }
+                    updateList(playlist);
                 }
-                updateList(playlist);
             }
+            asyncChangeListName(id);
         }
-        asyncChangeListName(id);
     }
 
     store.setMarkedPlaylist = function (idNamePair) {
@@ -347,6 +349,52 @@ export const useGlobalStore = () => {
 
     store.hideDeleteSongModal = function () {
         document.getElementById("delete-song-modal").classList.remove("is-visible");
+    }
+
+    store.editSong = function () {
+        const playlist = store.currentList
+        playlist.songs[store.currentSongIndex].title = document.getElementById("songtitle").value
+        playlist.songs[store.currentSongIndex].artist = document.getElementById("songartist").value
+        playlist.songs[store.currentSongIndex].youTubeId = document.getElementById("youtubeid").value
+
+        console.log("playlist", playlist.songs[store.currentSongIndex])
+
+        async function asyncEditSong() {
+            let response = await api.updatePlaylistById(store.currentList._id, playlist)
+            if (response.data.success) {
+                storeReducer({
+                    type: GlobalStoreActionType.SET_CURRENT_LIST,
+                    payload: store.currentList
+                })
+                store.hideEditSongModal();
+            }
+        }
+        asyncEditSong()
+    }
+
+    store.showEditSongModal = function (index) {
+        let title = store.currentList.songs[index].title
+        let artist = store.currentList.songs[index].artist
+        let youTubeId = store.currentList.songs[index].youTubeId
+
+        let song = {
+            index: index,
+            title: title,
+            artist: artist,
+        }
+        storeReducer({
+            type: GlobalStoreActionType.SET_EDIT_SONG_ACTIVE,
+            payload: song
+        });
+
+        document.getElementById("songtitle").value = title;
+        document.getElementById("songartist").value = artist;
+        document.getElementById("youtubeid").value = youTubeId;
+        document.getElementById("edit-song-modal").classList.add("is-visible");
+    }
+
+    store.hideEditSongModal = function () {
+        document.getElementById("edit-song-modal").classList.remove("is-visible");
     }
 
     store.getPlaylistSize = function() {

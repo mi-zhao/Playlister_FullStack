@@ -12,7 +12,7 @@ function SongCard(props) {
     }
 
     function handleDoubleClick() {
-        console.log("clicked")
+        store.showEditSongModal(index);
     }
 
     return (
@@ -22,7 +22,7 @@ function SongCard(props) {
             className={cardClass}
             onDoubleClick={handleDoubleClick}
         >
-            {index + 1}.
+            {index + 1}.{" "}
             <a
                 id={'song-' + index + '-link'}
                 className="song-link"

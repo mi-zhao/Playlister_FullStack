@@ -224,6 +224,14 @@ input {
   font-size: 24pt;
 }
 
+.edit-dialog-header {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: 20% 20% 20%;
+  gap: 20px 20px;
+  font-size: 30pt;
+}
+
 .confirm-cancel-button {
   
   /* float: ; */
