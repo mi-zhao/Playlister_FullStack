@@ -1,6 +1,6 @@
 import { createContext, useState } from 'react'
 import jsTPS from '../common/jsTPS'
-import api from '../api'
+import api, { updatePlaylistById } from '../api'
 export const GlobalStoreContext = createContext({});
 /*
     This is our global data store. Note that it uses the Flux design pattern,
@@ -295,6 +295,26 @@ export const useGlobalStore = () => {
             }
         }
         asyncSetCurrentList(id);
+    }
+
+    store.moveSong = function (from, to) {
+        const fromSong = store.currentList.songs[from]
+        const toSong = store.currentList.songs[to]
+
+        const playlist = store.currentList
+        playlist.songs[from] = toSong
+        playlist.songs[to] = fromSong
+    
+        async function asyncMoveSong() {
+            let response = await updatePlaylistById(store.currentList._id, playlist)
+            if (response.data.success) {
+                storeReducer({
+                    type: GlobalStoreActionType.SET_CURRENT_LIST,
+                    payload: playlist
+                })
+            }
+        }
+        asyncMoveSong();
     }
 
     store.addSong = function () {
