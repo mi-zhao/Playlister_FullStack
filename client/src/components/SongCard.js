@@ -7,11 +7,6 @@ function SongCard(props) {
     const { song, index } = props;
     let cardClass = "list-card unselected-list-card";
 
-    const state = {
-        dragfrom: "",
-        dragto: ""
-    }
-
     function handleDeleteSong() {
         store.showDeleteSongModal(index);
     }
@@ -49,7 +44,7 @@ function SongCard(props) {
         let sourceId = event.dataTransfer.getData("song");
         sourceId = sourceId.substring(sourceId.indexOf("-") + 1, target.id.indexOf("-") + 2);
 
-        store.moveSong(sourceId, targetId);
+        store.moveSongTransaction(sourceId, targetId)
     }
 
     return (
