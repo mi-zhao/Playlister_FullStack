@@ -15,6 +15,9 @@ function DeleteListModal() {
     return (
         <div className="modal" id="delete-list-modal" data-animation="slideInOutLeft">
             <div className="modal-dialog">
+                <div className="modal-north">
+                    Delete Playlist?
+                </div>
                 <div className="dialog-header">
                     Do you wish to permanently delete the {store.playlistName} playlist?
                 </div>

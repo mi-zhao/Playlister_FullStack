@@ -58,6 +58,7 @@ function ListCard(props) {
             let id = event.target.id.substring("list-".length);
             store.changeListName(id, text);
             toggleEdit();
+            document.getElementById("add-list-button").disabled = false;
         }
     }
     function handleUpdateText(event) {
@@ -90,7 +91,7 @@ function ListCard(props) {
                 id={"delete-list-" + idNamePair._id}
                 className="list-card-button"
                 onClick={handleToggleDelete}
-                value={"\u2715"}
+                value={"🗑️"}
             />
             <input
                 disabled={cardStatus}

@@ -528,13 +528,17 @@ export const useGlobalStore = () => {
         document.getElementById("add-song-button").disabled = true;
     }
 
+    store.disableListToolBarButtons = function () {
+        document.getElementById("add-list-button").disabled = true;
+    }
+
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
     store.setIsListNameEditActive = function () {
         storeReducer({
             type: GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE,
             payload: null
         });
-        store.disableEditToolBarButtons();
+        store.disableListToolBarButtons();
     }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT

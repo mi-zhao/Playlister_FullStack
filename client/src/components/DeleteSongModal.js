@@ -15,6 +15,9 @@ function DeleteSongModal() {
     return (
         <div className="modal" id="delete-song-modal" data-animation="slideInOutLeft">
             <div className="modal-dialog">
+                <div className="modal-north">
+                    Delete Song?
+                </div>
                 <div className="dialog-header">
                     Do you wish to permanently delete the song {store.currentSongTitle} by {store.currentSongArtist}?
                 </div>

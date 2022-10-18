@@ -15,6 +15,9 @@ function EditSongModal() {
     return (
         <div className="modal" id="edit-song-modal" data-animation="slideInOutLeft">
             <div className="modal-dialog">
+                <div className="modal-north">
+                    Edit Song
+                </div>
                 <div className="edit-dialog-header">
                     Title<input type="text" id="songtitle"></input>
                     Artist<input type="text" id="songartist"></input>
